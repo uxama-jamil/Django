@@ -19,5 +19,6 @@ from django.urls import path,include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('schoolsys/', include('schoolsys.urls')), #including child route or url
 
 ]
