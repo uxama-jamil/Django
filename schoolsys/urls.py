@@ -16,8 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from schoolsys.views import FetchTeacherView
+from schoolsys.views import FetchTeacherView,FetchStudent
 
 urlpatterns = [
-    path('fetch/', FetchTeacherView.as_view()),
+    path('teacher/', FetchTeacherView.as_view()),
+    path('student/', FetchStudent.as_view()),
+
 ]
