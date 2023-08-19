@@ -16,7 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from schoolsys.views import FetchTeacherView
 
 urlpatterns = [
-    path('school/', admin.site.urls,name='abc'),
+    path('fetch/', FetchTeacherView.as_view()),
 ]
