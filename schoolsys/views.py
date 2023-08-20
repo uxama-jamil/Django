@@ -11,7 +11,7 @@ class FetchTeacherView(views.APIView):
 
     def get(self,request):
         print("request is ",request.GET.get('teacher_id'))
-        tid = request.GET.get('teacher_id')#getting query params
+        tid = request.GET.get('tid')#getting query params
         query=teacher.objects.all() #getting whole record
         ser = TeacherSerializer(query,many=True) # many true means it will have more than one record
         
@@ -46,6 +46,19 @@ class FetchTeacherView(views.APIView):
             
         else:
             return Response({'status':False,'error':ser.errors},400)
+        
+    def delete(self,request):
+        tid = request.data.get('tid',False)
+        query = teacher.objects.filter(id=tid)
+        if not tid:
+            return Response("Tid is  requried")
+        if query:
+            print(query,"teahcersss")
+
+            query.delete()
+            return Response("Data deleted")
+        else:
+            return Response("no record found")
 
 
 #student    
@@ -79,17 +92,28 @@ class FetchStudent(views.APIView):
     
     def get(self,request):
         try:
-            data = request.data#getting query params
+            data = request.GET.get('sid') #getting data from query params
             query=student.objects.all() #getting whole record
             ser = StudentSerializer(query,many=True)
-            if 'sid' in data:
-                query=student.objects.get(id=data['sid']) #getting specifc record
+            if data:
+                query=student.objects.get(id=data) #getting specifc record
                 ser = StudentSerializer(query)
 
                 return Response(ser.data) #returning response
             return Response(ser.data)
         except Exception as e:
             return Response({"status":False,"message":ser.errors})
+        
+    def delete(self,request):
+        data = request.data
+        query = student.objects.get(id=data['sid'])
+        if 'sid' in data:
+            query.delete()
+            Response("Data deleted")
+        else:
+            Response("sid is missing")
+    
+
 
 
 
