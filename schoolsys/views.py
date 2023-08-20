@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets,views
 from schoolsys.models import student,teacher
 from rest_framework.response import Response
-from .serializer import TeacherSerializer
+from .serializer import *
 
 # Create your views here.
 
@@ -53,24 +53,43 @@ class FetchStudent(views.APIView):
     def post(self,request):
         try:
             body = request.data
-            print(body)
-            res=student.objects.create(name=body['name'],subject=body['subject'],class_name=body['class'],teacher_id_id=body['teacher']) # creating record for student and teacher_id_id is foriegn key of teacher id
-            return Response("data added successfully")
+            ser = StudentSerializer(data=body)
+            if ser.is_valid():
+                ser.save()
+                return Response({'status':True,'message':ser.data})
+            else:
+                return Response({"status":False,"message":ser.errors})
+                
         except Exception as e:
             return Response({"status":False,"message":str(e)})
+
+    def patch(self,request):
+
+        body = request.data
+        query = student.objects.all().get(id=body['sid'])
+        ser = StudentSerializer(query,data=body,partial=True)
+        if ser.is_valid():
+            ser.save()
+            return Response("Data updated")
+        else:
+            return Response(ser.errors)
+
+
 
     
     def get(self,request):
         try:
-            sid = request.GET.get('student_id')#getting query params
-            query=student.objects.all().values() #getting whole record
-            
-            if sid:
-                query=student.objects.filter(id=sid).values() #getting specifc record
-                return Response(query) #returning response
-            return Response(query)
+            data = request.data#getting query params
+            query=student.objects.all() #getting whole record
+            ser = StudentSerializer(query,many=True)
+            if 'sid' in data:
+                query=student.objects.get(id=data['sid']) #getting specifc record
+                ser = StudentSerializer(query)
+
+                return Response(ser.data) #returning response
+            return Response(ser.data)
         except Exception as e:
-            return Response({"status":False,"message":str(e)})
+            return Response({"status":False,"message":ser.errors})
 
 
 

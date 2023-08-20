@@ -5,3 +5,9 @@ class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model= teacher
         fields = '__all__' # for specific field ['name','subject'......]
+
+
+class StudentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = student
+        fields = "__all__"
